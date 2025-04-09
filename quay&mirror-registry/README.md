@@ -4,6 +4,10 @@
 分為兩個部份的安裝  
 差別參考前一頁  
  [下載](https://console.redhat.com/openshift/downloads#tool-mirror-registry "link")
+下載中的OpenShift disconnected installation tools  
+mirror registry for Red Hat OpenShift 
+OpenShift Client (oc) mirror plugin
+
 
 #### 環境硬體配置(建議需求)  
 
@@ -27,6 +31,7 @@ DNS正解，反解
 要注意空間要足夠  
 
 ```
+tar -zxvf mirror-registry-amd64.tar.gz
 ./mirror-registry install
 ```
 
@@ -40,4 +45,14 @@ podman login -u init -p 3lQso4O0Jx5zP976q8rHReuVIMk1DLi2 quay.resin.lab:8443 --t
 ```
 
 
+接下來會通過反解自動設定FQND  
+接下來可以通過網頁來進行連線  
+
+### oc-mirror  
+
+```
+tar -zxvf oc-mirror.rhel9.tar.gz
+chmod +x oc-mirror
+mv oc-mirror /usr/local/bin/
+```
 
