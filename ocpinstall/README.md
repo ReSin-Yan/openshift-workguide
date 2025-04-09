@@ -33,7 +33,10 @@ Haproxy(建議確認route數量)
 | Memory  | 8 GB |  
 | Disk  | 300G |  
 
-
+SELinux: 每台都是Enforcing!  
+bootstrap和master強制要用rhcos，worker則rhcos或rhel都可  
 
 ### Install Mirror Registry  
+
+
 
