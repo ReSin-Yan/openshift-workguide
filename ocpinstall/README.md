@@ -1,9 +1,6 @@
 # OCP install  
 
 ocpinstall 包含了幾個部分  
-bastion  
-http  
-Haproxy的
 
  | 配置腳色 | 用處 | 
 |-------|-------|
@@ -11,6 +8,7 @@ Haproxy的
 | http |  ocp安裝過程中會需要用到的服務，ocp安裝類似於pxe boot，會從一個存放點下載設定檔案近來進行設定(此檔案為.ign檔案) |
 | Haproxy  | 會需要有loadbalance的服務來進行，如果環境內有如F5這一種配備，可以改用 |  
 | DNS  | 建議使用windows DNS，注意正反解 |  
+| quay(mirror-registry)  | 兩個設計是類似的，但是有授權相關的問題，所以本質上是不一樣的 |  
 
 
 #### 環境硬體配置(建議需求)  
