@@ -281,3 +281,8 @@ systemctl restart rsyslog
 systemctl status rsyslog
 systemctl restart haproxy
 ```
+
+接下來在同網段的位置利用網頁IP進行驗證  
+預設port號是9000  
+
+[haproxyIP:9000/stats](http://192.168.50.105:9000/stats "link")  
