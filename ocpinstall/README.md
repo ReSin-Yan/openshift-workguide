@@ -36,7 +36,7 @@ Haproxy(建議確認route數量)
 SELinux: 每台都是Enforcing!  
 bootstrap和master強制要用rhcos，worker則rhcos或rhel都可  
 
-### Install Mirror Registry  
+### Install bastion  
 
 
 
