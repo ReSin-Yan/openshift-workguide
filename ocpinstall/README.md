@@ -176,8 +176,8 @@ frontend stats
   stats hide-version
   stats refresh 30s
   stats show-node
-  stats show-desc Stats for ocp4 cluster
-  stats auth admin:installveryhard417
+  stats show-desc Stats for ocp cluster
+  stats auth admin:P@ssw0rd
   stats uri /stats
   stats admin if TRUE
 #---------------------------------------------------------------------
