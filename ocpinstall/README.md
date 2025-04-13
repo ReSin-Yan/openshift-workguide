@@ -244,3 +244,40 @@ backend ingress-https
   server router1 router1.resin.lab:443 check
   server router2 router2.resin.lab:443 check
 ```
+
+
+改好後，start和enable haproxy  
+確認好狀態ctrl+c離開  
+```
+systemctl enable haproxy.service --now
+systemctl status haproxy.service
+```
+
+設定log  
+```
+vim /etc/haproxy/haproxy.cfg
+```
+log  127.0.0.1 local2 這行要打開  
+預設已經開了  
+
+設定rsyslog.conf  
+```
+vim /etc/rsyslog.conf
+```
+在MODULES這邊新增  
+```
+$ModLoad imudp
+$UDPServerRun 514
+$UDPServerAddress 127.0.0.1
+```
+在RULES這邊新增一行  
+```
+local2.*                       /var/log/haproxy.log
+```
+
+restart rsyslog & haproxy  
+```
+systemctl restart rsyslog
+systemctl status rsyslog
+systemctl restart haproxy
+```
