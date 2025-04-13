@@ -96,3 +96,151 @@ getsebool haproxy_connect_any
 vim /etc/haproxy/haproxy.cfg
 ```
 
+這邊會將haproxy作為ocp的vip  
+由於設計的關係，也會將這一台haproxy作為route的設定  
+所以設定參考如下  
+如果使用的話請修改自行的設定(主要是IP,hostname,以及應用vip以及route)  
+
+```
+#---------------------------------------------------------------------
+# Example configuration for a possible web application.  See the
+# full configuration options online.
+#
+#   https://www.haproxy.org/download/1.8/doc/configuration.txt
+#
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+# Global settings
+#---------------------------------------------------------------------
+global
+    # to have these messages end up in /var/log/haproxy.log you will
+    # need to:
+    #
+    # 1) configure syslog to accept network log events.  This is done
+    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
+    #    /etc/sysconfig/syslog
+    #
+    # 2) configure local2 events to go to the /var/log/haproxy.log
+    #   file. A line like the following can be added to
+    #   /etc/sysconfig/syslog
+    #
+    #    local2.*                       /var/log/haproxy.log
+    #
+    log         127.0.0.1 local2
+
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+    # utilize system-wide crypto-policies
+    ssl-default-bind-ciphers PROFILE=SYSTEM
+    ssl-default-server-ciphers PROFILE=SYSTEM
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+#---------------------------------------------------------------------
+#frontend stats
+#---------------------------------------------------------------------
+frontend stats
+  bind *:9000
+  mode            http
+  log             global
+  maxconn 10
+  stats enable
+  stats hide-version
+  stats refresh 30s
+  stats show-node
+  stats show-desc Stats for ocp4 cluster
+  stats auth admin:installveryhard417
+  stats uri /stats
+  stats admin if TRUE
+#---------------------------------------------------------------------
+#openshift-api-server
+#---------------------------------------------------------------------
+frontend openshift-api-server
+  bind *:6443
+  default_backend openshift-api-server
+  mode tcp
+  option tcplog
+
+backend openshift-api-server
+  balance source
+  mode tcp
+  server master1 master1.resin.lab:6443 check
+  server master2 master2.resin.lab:6443 check
+  server master3 master3.resin.lab:6443 check
+  server bootstrap bootstrap.resin.lab:6443 check
+
+#---------------------------------------------------------------------
+#machine-config-server
+#---------------------------------------------------------------------
+frontend machine-config-server
+  bind *:22623
+  default_backend machine-config-server
+  mode tcp
+  option tcplog
+
+backend machine-config-server
+  balance source
+  mode tcp
+  server bootstrap bootstrap.resin.lab:22623 check inter 1s backup
+  server master1 master1.resin.lab:22623 check
+  server master2 master2.resin.lab:22623 check
+  server master3 master3.resin.lab:22623 check
+
+#---------------------------------------------------------------------
+#ingress-http
+#---------------------------------------------------------------------
+frontend ingress-http
+  bind *:80
+  default_backend ingress-http
+  mode tcp
+  option tcplog
+
+backend ingress-http
+  balance source
+  mode tcp
+  server router1 router1.resin.lab:80 check
+  server router2 router2.resin.lab:80 check
+
+#---------------------------------------------------------------------
+#ingress-https
+#---------------------------------------------------------------------
+frontend ingress-https
+  bind *:443
+  default_backend ingress-https
+  mode tcp
+  option tcplog
+
+backend ingress-https
+  balance source
+  mode tcp
+  server router1 router1.resin.lab:443 check
+  server router2 router2.resin.lab:443 check
+```
