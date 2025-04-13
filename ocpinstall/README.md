@@ -67,3 +67,32 @@ systemctl status chronyd
 
 ### Install Haproxy(if need)  
 
+打開Haproxy的防火牆  
+
+```
+firewall-cmd --add-port={6443,22623}/tcp --permanent && firewall-cmd --reload
+semanage port --add --type http_port_t --proto tcp 6443
+semanage port --add --type http_port_t --proto tcp 22623
+semanage port -l | grep http_port_t
+```
+
+SELinux確保關閉
+```
+setsebool -P haproxy_connect_any=1
+```
+
+安裝haproxy  
+建議網路能夠對外比較方便安裝  
+```
+dnf -y install haproxy 
+```
+驗證安裝完成  
+```
+getsebool haproxy_connect_any 
+```
+
+設定haproxy  
+```
+vim /etc/haproxy/haproxy.cfg
+```
+
