@@ -53,6 +53,7 @@ firewall-cmd --add-service={dns,http,https,ntp,mountd,rpc-bind,nfs} --permanent 
 ```
 
 把pool那行註解掉，然後新增server time.stdtime.gov.tw iburst ，或是自己的ntp server(可以從windows server內部來進行設定，但是一定要有) 
+allow 192.168.50.0/24  
 ```
 vim /etc/chrony.conf
 ```
