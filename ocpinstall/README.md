@@ -112,6 +112,18 @@ cp kubectl oc openshift-install /usr/local/bin
 sudo rm *
 ```
 
+產生SSH KEY，以便日後連線到各node //因為rhcos限制不讓你用帳密的方式連，強制要用key的方式連，且要用core這個user來登入  
+
+```
+cd
+mkdir workspace/keys
+cd workspace/keys/
+ssh-keygen -t ed25519 -N '' -f ocpssh
+eval "$(ssh-agent -s)"
+ssh-add ocpssh
+```
+
+
 
 
 ### Install Haproxy(if need)  
