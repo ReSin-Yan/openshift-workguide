@@ -44,6 +44,8 @@ INFO[2025-04-09 20:55:58] Quay is available at https://quay.resin.lab:8443 with 
 podman login -u init -p 3lQso4O0Jx5zP976q8rHReuVIMk1DLi2 quay.resin.lab:8443 --tls-verify=false
 ```
 
+憑證相關內容會放在quay-rootCA  這一個資料夾下  
+
 
 接下來會通過反解自動設定FQND  
 接下來可以通過網頁來進行連線  
