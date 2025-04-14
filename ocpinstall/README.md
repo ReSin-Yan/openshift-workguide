@@ -188,7 +188,6 @@ scp rootCA.pem root@192.168.50.103:/etc/pki/ca-trust/source/anchors/
 檢查  
 ```
 update-ca-trust extract
-update-ca-trust extract
 ```
 
 
@@ -414,3 +413,75 @@ systemctl restart haproxy
 預設port號是9000  
 
 [haproxyIP:9000/stats](http://192.168.50.105:9000/stats "link")  
+
+
+
+
+### Install ocp    
+
+
+
+先建立含有變數的install-config.yaml.bak  
+
+```
+apiVersion: v1
+baseDomain: resin.lab
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 0
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: ocp4
+networking:
+  clusterNetwork:
+  - cidr: 192.168.0.0/16
+    hostPrefix: 24
+  networkType: OVNKubernetes
+  serviceNetwork:
+  - 10.244.0.0/16
+platform:
+  none: {}
+fips: false
+pullSecret: '${PULL_SECRET}'
+sshKey: '${OCP_SSH_KEY}'
+additionalTrustBundle: |
+${ROOT_CA}
+ImageDigestSources:
+- mirrors:
+  - quay.resin.lab:8443/ocp414/ocp-release
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - quay.resin.lab:8443/ocp414/ocp-release
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+```
+
+建立填入參數的文件  
+```
+sed 's/^/  /g' /etc/pki/ca-trust/source/anchors/rootCA.pem > /root/workspace/keys/reform.txt
+```
+
+
+建立env_value  
+```
+vim env_value
+```
+
+貼入以下資訊  
+```
+export PULL_SECRET=$(cat /root/workspace/keys/pull-secret.json | jq -c)
+export OCP_SSH_KEY=$(cat /root/workspace/keys/ocpssh.pub)
+export ROOT_CA=$(cat /root/workspace/keys/reform.txt)
+```
+
+```
+source env_value
+```
+
+產生正確install_config檔案  
+```
+envsubst < install-config.yaml.bak > /root/workspace/installocp/install-config.yaml
+```
