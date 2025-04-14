@@ -424,6 +424,13 @@ systemctl restart haproxy
 先建立含有變數的install-config.yaml.bak  
 
 ```
+cd
+mkdir workspace/installocp/install-config
+cd workspace/installocp/install-config/
+vim install-config.yaml.bak
+```
+
+```
 apiVersion: v1
 baseDomain: resin.lab
 compute:
@@ -467,6 +474,7 @@ sed 's/^/  /g' /etc/pki/ca-trust/source/anchors/rootCA.pem > /root/workspace/key
 
 建立env_value  
 ```
+cd 
 vim env_value
 ```
 
@@ -483,5 +491,11 @@ source env_value
 
 產生正確install_config檔案  
 ```
-envsubst < install-config.yaml.bak > /root/workspace/installocp/install-config.yaml
+cd workspace/installocp/install-config/
+envsubst < install-config.yaml.bak > install-config.yaml
+cp install-config.yaml ../
 ```
+
+產生
+
+
