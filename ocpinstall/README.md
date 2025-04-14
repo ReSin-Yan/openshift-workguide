@@ -65,6 +65,55 @@ systemctl enable --now chronyd
 systemctl status chronyd
 ```
 
+安裝Apahe(http server)  
+主要會作為放置.ign檔案以及存放raw.gz檔案的位置  
+```
+dnf -y install httpd
+```
+把port改成8080，避免跟haproxy衝到!  
+```
+vim /etc/httpd/conf/httpd.conf
+```
+
+```
+Listen 8080
+```
+
+start和enable httpd
+```
+systemctl enable httpd --now
+systemctl status httpd
+```
+
+把之前載下來的raw.gz放到/var/www/html/底下建立的資料夾以供之後下載  
+```
+mkdir -p /var/www/html/ocpinstall
+```
+
+檢查selinux context，需改成httpd_sys_content_t  
+```
+ll -Z /var/www/html/ocpinstall
+restorecon -v rhcos-4.xx.0-x86_64-metal.x86_64.raw.gz
+```
+
+放入oc以及oc-install檔案到bastion上  
+並且解壓縮之後複製到/usr/local/bin下面  
+```
+cd
+mkdir workspace
+cd workspace/
+```
+將檔案上傳至此資料夾  
+
+```
+tar -xvf openshift-install-linux-4.14.34.tar.gz
+tar -xvf oc-4.14.34-linux.tar.gz
+cp kubectl oc openshift-install /usr/local/bin
+sudo rm *
+```
+
+
+
 ### Install Haproxy(if need)  
 
 打開Haproxy的防火牆  
