@@ -172,6 +172,27 @@ echo -n 'admin:P@ssw0rd' | base64
 }
 ```
 
+把pull-secret.json複製到~/.docker/下以便認證，檔名改為config.json  
+
+```
+mkdir -p ~/.docker
+cp pull-secret.json ~/.docker/config.json
+```
+
+
+從quay那台上面，把之前產的rootCA.pem複製到這邊(bastiondns)的/etc/pki/ca-trust/source/anchors/  
+```
+scp rootCA.pem root@192.168.50.103:/etc/pki/ca-trust/source/anchors/
+```
+
+檢查  
+```
+update-ca-trust extract
+update-ca-trust extract
+```
+
+
+
 ### Install Haproxy(if need)  
 
 打開Haproxy的防火牆  
