@@ -124,7 +124,53 @@ ssh-add ocpssh
 ```
 
 
+複製pull secret，並在secret裡建立quay的帳密  
+https://console.redhat.com/openshift/install/pull-secret  
+Copy pull secret後，把複製下來的東西貼到pull-secret  
+貼上剛剛Copy pull secret的東西  
+```
+mkdir -p /ocp/pull-sec
+vim /ocp/pull-sec/pull-secret
+```
 
+存檔離開後，把pull-secret轉成json檔  
+```
+cat pull-secret | jq > pull-secret.json
+```
+
+在最上方新增地端quay的資訊  
+其中auth來自於  
+```
+echo -n 'admin:P@ssw0rd' | base64
+```
+
+範例如下，注意連線到redhat網站的會有時間限制  
+```
+{
+  "auths": {
+    "quay.resin.lab": {
+      "auth": "YWRtaW46UEBzc3cwcmQ=",
+      "email": "resin.yan@kyndryl.com"
+    },
+    "cloud.openshift.com": {
+      "auth": "b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K29jbV9hY2Nlc3NfNWRjY2M4ZmU2MWYxNGIzMGEyNTRjOGQ3NmMwODU0YTY6SlgzM0g0QVFWWVFUNzk1S1QwODU5MTNCTDdJS1ZXTjdQU1pIUDlRSzlISTFSV0Q0RE41WUNQSjhZWTdMQ0NMNw==",
+      "email": "resin.yan@kyndryl.com"
+    },
+    "quay.io": {
+      "auth": "b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K29jbV9hY2Nlc3NfNWRjY2M4ZmU2MWYxNGIzMGEyNTRjOGQ3NmMwODU0YTY6SlgzM0g0QVFWWVFUNzk1S1QwODU5MTNCTDdJS1ZXTjdQU1pIUDlRSzlISTFSV0Q0RE41WUNQSjhZWTdMQ0NMNw==",
+      "email": "resin.yan@kyndryl.com"
+    },
+    "registry.connect.redhat.com": {
+      "auth": "fHVoYy1wb29sLTYxYTBhYTg2LWUxNmEtNGRkZS1iMmI0LTRhZjgwNTY4NDg2NjpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSXpaamxoWm1NM04yTXlNVEkwTkRJeVlUQXdaRGt3T1RFMU1XSTVaREJsTlNKOS5jYXIwYXlMOTQ1Y3FlVzFVUjdyV09kNEhnT0lXeUtZT0RWdnEwMDZFRWcwUGtKOXhXM2huZFpkV0VrZnRtdURDMzlSZHdZUmFIaHRmY003bUdIY2piVWY0VDlqcUk2TUtCV1ZOZ1VOb2JjWWZWdkhmOGlLUDhMYjlpcnZkclYzVkJ3blVTajk3UGUxVmhEdUxVWmtlWmtoMzZ2RVR2RDBuNE1RanN2dDZiS0w4dVBhMzU5RFpsRFhWR2d1YWV2UGtGNk9rZUEySlA0cC1ET3Jna29RWGRxV3JHcVB3V0p6d1E3WjROa0MwQVVIQ0Qxc0JpME5Hd2xVRHVOd3pWaHFaZGhKSUEzS3FmVkxCdzdSMFNiQjhDc0tpSG1FQU5iMTBfaU1FYUNEdWxZSW1Xc2NQYmFfOHByNXNuWW1SY3NkQU5jYTVLR2tXUmdYck13ekFHajVpV05kaFhwbm1DUlA5ZWFtZlE1bWhrMER1aEJLN1RhRmFLTFZ3b05qS1R3b0pDbUlOR0RNVWVWbGFyWmg0LWEyZWJaY2U5MEhCcUNFbmtTUkV5R1JxTk1KcnhvOHZTQl9yREN1LTAxMmdPR0VoQWJTSUJ0NVZFSlNlY1NUUHlkU2ZvTEwxVkh3S1RXbGVYQ2U4d0NDVXhoZVdxbmkyNWtGMmNadGxFMUtJWlItY01FVmp3VmttcWNrb1dwdmdHcy13YWttdE96TDIwZl9TTHV2c0pxMElzOXhoeTFzNUgxYlllTVczN1dJS2JJUUVLc292TXRCZktmbHFPSFE2V3ROWG5XWVdHUmhvVGJDQzlENmhDMUphV21ob1ZzYnJkWklodW8xbTZBaXU3UGdjU25jUWhrWUpCY1NrWDJzM3R0OXVBcml5bXN5d3NTczE5MmZIOWQzeGg1cw==",
+      "email": "resin.yan@kyndryl.com"
+    },
+    "registry.redhat.io": {
+      "auth": "fHVoYy1wb29sLTYxYTBhYTg2LWUxNmEtNGRkZS1iMmI0LTRhZjgwNTY4NDg2NjpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSXpaamxoWm1NM04yTXlNVEkwTkRJeVlUQXdaRGt3T1RFMU1XSTVaREJsTlNKOS5jYXIwYXlMOTQ1Y3FlVzFVUjdyV09kNEhnT0lXeUtZT0RWdnEwMDZFRWcwUGtKOXhXM2huZFpkV0VrZnRtdURDMzlSZHdZUmFIaHRmY003bUdIY2piVWY0VDlqcUk2TUtCV1ZOZ1VOb2JjWWZWdkhmOGlLUDhMYjlpcnZkclYzVkJ3blVTajk3UGUxVmhEdUxVWmtlWmtoMzZ2RVR2RDBuNE1RanN2dDZiS0w4dVBhMzU5RFpsRFhWR2d1YWV2UGtGNk9rZUEySlA0cC1ET3Jna29RWGRxV3JHcVB3V0p6d1E3WjROa0MwQVVIQ0Qxc0JpME5Hd2xVRHVOd3pWaHFaZGhKSUEzS3FmVkxCdzdSMFNiQjhDc0tpSG1FQU5iMTBfaU1FYUNEdWxZSW1Xc2NQYmFfOHByNXNuWW1SY3NkQU5jYTVLR2tXUmdYck13ekFHajVpV05kaFhwbm1DUlA5ZWFtZlE1bWhrMER1aEJLN1RhRmFLTFZ3b05qS1R3b0pDbUlOR0RNVWVWbGFyWmg0LWEyZWJaY2U5MEhCcUNFbmtTUkV5R1JxTk1KcnhvOHZTQl9yREN1LTAxMmdPR0VoQWJTSUJ0NVZFSlNlY1NUUHlkU2ZvTEwxVkh3S1RXbGVYQ2U4d0NDVXhoZVdxbmkyNWtGMmNadGxFMUtJWlItY01FVmp3VmttcWNrb1dwdmdHcy13YWttdE96TDIwZl9TTHV2c0pxMElzOXhoeTFzNUgxYlllTVczN1dJS2JJUUVLc292TXRCZktmbHFPSFE2V3ROWG5XWVdHUmhvVGJDQzlENmhDMUphV21ob1ZzYnJkWklodW8xbTZBaXU3UGdjU25jUWhrWUpCY1NrWDJzM3R0OXVBcml5bXN5d3NTczE5MmZIOWQzeGg1cw==",
+      "email": "resin.yan@kyndryl.com"
+    }
+  }
+}
+```
 
 ### Install Haproxy(if need)  
 
