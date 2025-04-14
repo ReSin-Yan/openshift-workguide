@@ -496,6 +496,37 @@ envsubst < install-config.yaml.bak > install-config.yaml
 cp install-config.yaml ../
 ```
 
-產生
+產生manifests  
+```
+openshift-install create manifests
+sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' manifests/cluster-scheduler-02-config.yml
+```
+
+產生ignition檔案  
+```
+openshift-install create ignition-configs
+```
+
+將.ign檔案複製到http server  
+```
+chmod 755 *.ign
+cp *.ign /var/www/html/ocpinstall/
+```
+
+在/var/www/html/ocpinstall建立安裝腳本，以利bootstrap, master, worker node安裝  
+
+```
+cd /var/www/html/ocpinstall
+vim install.sh
+```
+
+貼上  
+```
+set -x
+
+BASTION_IP="192.168.50.103:8080"
+
+sudo coreos-installer install /dev/sda --insecure --insecure-ignition -u http://${BASTION_IP}/ocpinstall/rhcos-4.14.34-x86_64-metal.x86_64.raw.gz -I http://${BASTION_IP}/ocpinstall/${CLUSTER_ROLE}.ign --firstboot-args 'rd.neednet=1' --copy-network
+```
 
 
