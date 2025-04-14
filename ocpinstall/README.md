@@ -529,4 +529,8 @@ BASTION_IP="192.168.50.103:8080"
 sudo coreos-installer install /dev/sda --insecure --insecure-ignition -u http://${BASTION_IP}/ocpinstall/rhcos-4.14.34-x86_64-metal.x86_64.raw.gz -I http://${BASTION_IP}/ocpinstall/${CLUSTER_ROLE}.ign --firstboot-args 'rd.neednet=1' --copy-network
 ```
 
+bootstrap 虛擬機  
+開機完設定好網路  
+```
 
+```
