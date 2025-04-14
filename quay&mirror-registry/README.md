@@ -46,6 +46,11 @@ podman login -u init -p 3lQso4O0Jx5zP976q8rHReuVIMk1DLi2 quay.resin.lab:8443 --t
 
 憑證相關內容會放在quay-rootCA  這一個資料夾下  
 
+```
+cp rootCA.pem /etc/pki/ca-trust/source/anchors/
+update-ca-trust extract
+```
+
 
 接下來會通過反解自動設定FQND  
 接下來可以通過網頁來進行連線  
@@ -56,5 +61,26 @@ podman login -u init -p 3lQso4O0Jx5zP976q8rHReuVIMk1DLi2 quay.resin.lab:8443 --t
 tar -zxvf oc-mirror.rhel9.tar.gz
 chmod +x oc-mirror
 mv oc-mirror /usr/local/bin/
+```
+
+### image上傳到自建的quay上  
+```
+tar -zxvf oc-mirror.rhel9.tar.gz
+chmod +x oc-mirror
+mv oc-mirror /usr/local/bin/
+```
+
+放入pull-secret.json  
+
+```
+LOCAL_SECRET_JSON="/pull-secret.json"
+LOCAL_REGISTRY="quay.resin.lab:8443"
+LOCAL_REPOSITORY="ocp414/ocp-release"
+OCP_RELEASE="4.17.34"
+ARCHITECTURE="x86_64"
+PRODUCT_REPO="openshift-release-dev"
+RELEASE_NAME="ocp-release"
+
+oc adm release mirror -a ${LOCAL_SECRET_JSON} --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE} --to=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} --to-release-image=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE}
 ```
 
