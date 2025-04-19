@@ -445,7 +445,7 @@ metadata:
   name: ocp4
 networking:
   clusterNetwork:
-  - cidr: 192.168.0.0/16
+  - cidr: 172.10.0.0/16
     hostPrefix: 24
   networkType: OVNKubernetes
   serviceNetwork:
