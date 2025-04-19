@@ -578,6 +578,9 @@ reboot
 ```
 cp auth/kubeconfig /root/.kube/config
 source <(oc completion bash)
+oc completion bash > oc_bash_completion
+mv oc_bash_completion /etc/bash_completion.d/
+
 ```
 
 Approce csr  
@@ -598,3 +601,69 @@ oc get csr |grep -i pending | awk '{print $1}' | xargs -I {} oc adm certificate 
 watch -n 0.5 oc get node
 ```
 確保所有節點ready
+
+
+
+
+所有node安裝完後  
+調整ingresscontrollers裡的nodeselector的label  
+```
+oc edit ingresscontrollers -n openshift-ingress-operator
+```
+要在spec修改成如下  
+```
+spec:
+  clientTLS:
+    clientCA:
+      name: ""
+    clientCertificatePolicy: ""
+  httpCompression: {}
+  httpEmptyRequestsPolicy: Respond
+  httpErrorCodePages:
+    name: ""
+  nodePlacement:
+  nodeSelector:
+    matchLabels:
+       ingress: default
+  replicas: 2
+  tuningOptions:
+    reloadInterval: 0s
+  unsupportedConfigOverrides: null
+```
+
+然後給router node打標籤，打ingress=default  
+重啟服務之後、確認有長在route node上  
+```
+oc label node route1.resin.lab ingress=default
+oc label node route2.resin.lab ingress=default
+oc get no --show-labels |grep ingress
+oc rollout restart deployment router-default -n openshift-ingress
+oc get po -n openshift-ingress -o wide
+```
+
+
+更改worker在oc get no的ROLES及設定各node的machine config pool  
+```
+oc label nodes route1.resin.lab node-role.kubernetes.io/worker-
+oc label nodes route2.resin.lab node-role.kubernetes.io/worker-
+oc label nodes worker1.resin.lab node-role.kubernetes.io/worker-
+oc label nodes worker2.resin.lab node-role.kubernetes.io/worker-
+
+oc label nodes route1.resin.lab node-role.kubernetes.io/route=""
+oc label nodes route2.resin.lab node-role.kubernetes.io/route=""
+oc label nodes worker1.resin.lab node-role.kubernetes.io/worker=""
+oc label nodes worker2.resin.lab node-role.kubernetes.io/worker=""
+
+oc get node
+```
+
+建資料夾存放machine config相關的file  
+建立router node的mcp和logger node的mcp  
+```
+vim router-mcp.yaml
+```
+
+貼入如下  
+```
+vim router-mcp.yaml
+```
