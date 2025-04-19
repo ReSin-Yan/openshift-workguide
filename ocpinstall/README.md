@@ -648,11 +648,16 @@ oc label nodes route1.resin.lab node-role.kubernetes.io/worker-
 oc label nodes route2.resin.lab node-role.kubernetes.io/worker-
 oc label nodes worker1.resin.lab node-role.kubernetes.io/worker-
 oc label nodes worker2.resin.lab node-role.kubernetes.io/worker-
+oc label nodes logger1.resin.lab node-role.kubernetes.io/worker-
+oc label nodes logger2.resin.lab node-role.kubernetes.io/worker-
 
-oc label nodes route1.resin.lab node-role.kubernetes.io/route=""
-oc label nodes route2.resin.lab node-role.kubernetes.io/route=""
+
+oc label nodes route1.resin.lab node-role.kubernetes.io/router=""
+oc label nodes route2.resin.lab node-role.kubernetes.io/router=""
 oc label nodes worker1.resin.lab node-role.kubernetes.io/worker=""
 oc label nodes worker2.resin.lab node-role.kubernetes.io/worker=""
+oc label nodes logger1.resin.lab node-role.kubernetes.io/logger=""
+oc label nodes logger2.resin.lab node-role.kubernetes.io/logger=""
 
 oc get node
 ```
@@ -665,5 +670,105 @@ vim router-mcp.yaml
 
 貼入如下  
 ```
-vim router-mcp.yaml
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: router
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values:
+      - worker
+      - router
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/router: ""
+  paused: false
+```
+
+```
+vim logger-mcp.yaml
+```
+
+貼入如下  
+```
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: logger
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values:
+      - worker
+      - logger
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/logger: ""
+```
+
+
+分別部屬下去  
+```
+oc create -f router-mcp.yaml --save-config=true
+oc create -f logger-mcp.yaml --save-config=true
+```
+
+
+
+編寫chrony.conf檔案  
+讓每一台對準ntp server  
+```
+server 192.168.50.110 iburst
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+logdir /var/log/chrony
+```
+
+建立chrony-template.yaml  
+
+```
+vim chrony-template.yaml
+```
+
+貼入如下  
+```
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: ${MC_ROLE}
+  name: 99-${MC_ROLE}s-chrony-configuration
+spec:
+  config:
+    ignition:
+      config: {}
+      security:
+        tls: {}
+      timeouts: {}
+      version: 3.4.0
+    networkd: {}
+    passwd: {}
+    storage:
+      files:
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,${CHRONY_BASE64}
+        mode: 420
+        overwrite: true
+        path: /etc/chrony.conf
+  osImageURL: ""
+```
+
+之後分別產生master以及worker  
+```
+export CHRONY_BASE64=$(cat /root/workspace/installocp/mc-config/chrony.conf | base64 -w 0)
+export MC_ROLE="master"
+envsubst < chrony-template.yaml > 99-master-chrony.yaml
+export MC_ROLE="worker"
+envsubst < chrony-template.yaml > 99-worker-chrony.yaml
 ```
