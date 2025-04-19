@@ -531,6 +531,70 @@ sudo coreos-installer install /dev/sda --insecure --insecure-ignition -u http://
 
 bootstrap 虛擬機  
 開機完設定好網路  
+
+分別確認反解、DNS  
+之後跟bastion 利用curl的方式拿取ign檔案  
+之後進行設定   
+```
+dig -x [ip]
+export CLUSTER_ROLE=bootstrap
+curl http://192.168.50.103:8080/ocpinstall/install.sh | sh
+
+reboot
 ```
 
+
+
+master 虛擬機(會有三台)  
+開機完設定好網路  
+
+分別確認反解、DNS  
+之後設定
 ```
+dig -x [ip]
+export CLUSTER_ROLE=master
+curl http://192.168.50.103:8080/ocpinstall/install.sh | sh
+
+reboot
+```
+
+
+剩下所有的 虛擬機(會有N台)都設定為worker  
+開機完設定好網路  
+
+分別確認反解、DNS  
+之後設定
+```
+dig -x [ip]
+export CLUSTER_ROLE=worker
+curl http://192.168.50.103:8080/ocpinstall/install.sh | sh
+
+reboot
+```
+
+
+進行基礎設定  
+先將kubeconfig複製出來   
+```
+cp auth/kubeconfig /root/.kube/config
+source <(oc completion bash)
+```
+
+Approce csr  
+reboot後，回到bastion上，監控pending的csr  
+```
+watch -n 2 "oc get csr | grep -i pending"
+```
+
+另外開啟一個連線到bastion的畫面   
+依序approve看到的csr  
+```
+oc get csr |grep -i pending | awk '{print $1}' | xargs -I {} oc adm certificate approve {}
+```
+大約會重複兩到三次  
+
+接下來通過  
+```
+watch -n 0.5 oc get node
+```
+確保所有節點ready
