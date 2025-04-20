@@ -197,7 +197,7 @@ update-ca-trust extract
 打開Haproxy的防火牆  
 
 ```
-firewall-cmd --add-port={6443,22623,9000}/tcp --permanent && firewall-cmd --reload
+firewall-cmd --add-port={80,443,6443,22623,9000}/tcp --permanent && firewall-cmd --reload
 semanage port --add --type http_port_t --proto tcp 6443
 semanage port --add --type http_port_t --proto tcp 22623
 semanage port -l | grep http_port_t
