@@ -622,9 +622,9 @@ spec:
   httpErrorCodePages:
     name: ""
   nodePlacement:
-  nodeSelector:
-    matchLabels:
-       ingress: default
+    nodeSelector:
+      matchLabels:
+         ingress: default
   replicas: 2
   tuningOptions:
     reloadInterval: 0s
@@ -771,4 +771,66 @@ export MC_ROLE="master"
 envsubst < chrony-template.yaml > 99-master-chrony.yaml
 export MC_ROLE="worker"
 envsubst < chrony-template.yaml > 99-worker-chrony.yaml
+
+oc create -f  99-master-chrony.yaml
+oc create -f  99-worker-chrony.yaml
 ```
+
+建立別的admin，名稱叫admin  
+並且新增密碼  
+```
+oc create user admin
+oc adm policy add-cluster-role-to-user cluster-admin admin
+htpasswd -c -B -b users.htpasswd admin P@ssw0rd
+```
+
+為oauth設置htpasswd認證  
+```
+oc create secret generic htpass-secret --from-file=htpasswd=users.htpasswd -n openshift-config
+```
+
+編輯oauth  
+```
+oc edit oauth
+```
+
+輸入如下
+```
+identityProviders:
+  - name: htpass-login
+    mappingMethod: claim
+    type: HTPasswd
+    htpasswd:
+      fileData:
+        name: htpass-secret
+```
+之後等待幾分鐘之後重開頁面   
+
+
+oc login 測試新帳號  
+正常會遇到問題  
+原因是因為從bastion登入原本的帳號沒問題，但是另外的帳號就需要CA憑證  
+同理如果要在其他虛擬機進行登入  
+一樣要把憑證放入其他虛擬機內  
+```
+oc login -u admin
+```
+跳出x509 error  
+
+
+獲取憑證  
+```
+oc project openshift-authentication
+oc get po
+oc rsh oauth-openshift-xxxx  cat /run/secrets/kubernetes.io/serviceaccount/ca.crt > ocp4-ingress-ca.crt
+mv ocp4-ingress-ca.crt /etc/pki/ca-trust/source/anchors/
+update-ca-trust extract
+```
+
+移除kubeadmin，並建立別的admin帳號(可選)  
+```
+oc delete secrets kubeadmin -n kube-system
+```
+
+
+
