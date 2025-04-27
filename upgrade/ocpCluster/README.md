@@ -215,6 +215,13 @@ spec:
 status: {}
 ```
 
+### OCP升級      
+
+apply 3個idms, itms後，確認MCP狀態  
+確保全部都是True False False
+```
+oc get mcp
+```
 ### TIPS  
 
 關於推送路徑olm2  
