@@ -42,6 +42,16 @@ mv oc-mirror /usr/local/bin/
 oc-mirror version
 ```
 
+對外下載的虛擬機需要確認可以podlogin  registry.redhat.io  
+```
+podman login registry.redhat.io
+```
+
+對內的虛擬機需要確認可以podlogin  local quay  
+```
+podman login local.quay
+```
+
 ### oc-mirror v2    
 
 建立以下yaml  
@@ -116,12 +126,23 @@ file:///root/storage/
 ```
 其餘路徑檔案也需要確認好範圍  
 
+### oc-mirror mirror to mirro    
+
+如果當前環境是可以直些連線到外部網站下載  
+並且可以直接輸入以下內容  
+
+```
+oc-mirror --v2 --config=/root/WS_Resin/ocpupgrade/isc.yaml --workspace file:///s3/mirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s docker://quay.kyndryl.tw/olm2
+```
+
 ### TIPS  
 
 關於推送路徑olm2  
 需要事先在quay上面新增好org  
 但是哪一個org是可以進行討論  
 主要取決於管理難度  
+olm2單純只是名子而已  
+所以要思考怎樣管理是最不會混亂的  
 ```
 docker://quay.kyndryl.tw/olm2
 ```
