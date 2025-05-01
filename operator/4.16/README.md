@@ -115,7 +115,8 @@ file:///root/storage/
 
 如果當前環境是可以直些連線到外部網站下載  
 參考以下指令  
-需要更換的是workspace的路徑以及repo的路徑  
+需要更換的是config、workspace的路徑以及repo的路徑  
+config對應yaml檔案的位置
 workspace會存放working-dir/cluster-resources這一個檔案路徑，裡面放著三個檔案   
 repo路徑後面需要進行更換，不能相同，會蓋過前一個步驟的  
 
@@ -178,56 +179,53 @@ cc-redhat-operator-index-v4-16.yaml  cs-redhat-operator-index-v4-16.yaml  idms-o
 
  
 在可以連線到OCP的環境中  
-分別apply cs-redhat-operator-index-v4-16.yaml以及idms-oc-mirror.yaml其中檔案  
+分別apply cs-redhat-operator-index-v4-16.yaml以及idms-oc-mirror.yaml  
+務必要更改裡面的name(建立出來的name名稱都會一樣)
 ```
 cc-redhat-operator-index-v4-16.yaml  cs-redhat-operator-index-v4-16.yaml  idms-oc-mirror.yaml
 ```
 
-signature-configmap.yaml  
+cs-redhat-operator-index-v4-16.yaml  
+下面是修改過版本  
 ```
-apiVersion: v1
-binaryData:
-  sha256-7039e7bd34fd024ff619df914528c8d85e62b847291f6684096fd4ca8dba2bbd-2: owGbwMvMwMEoOU9/4l9n2UDGtYwpSWLxRQW5xZnpukWphbqG5fHmvuF6SZl56T9szaqVkosySzKTE3OUrBSqlTJzE9NTwayU/OTs1CLd3MS8zLTU4hLdlMx0IAWUUirOSDQyNbMyNzC2TDVPSjE2SUsxMDJJSzMztExJszQ0MTWySLZIsTBNNTNKsjAxN7I0TDMzszAxsDRLSzFJTrRISUo0SkpKUarVUVAqqSwAWaeUWJKfm5mskJyfV5KYmZdapAB0bV5iSWlRqhJQVWZKal5JZkklssOKUtNSi1LzksHaC0sTK/Uy8/XzC1LzijMy00qA0jmpicWpuimpZfr5yQUwvpWJnqGpnomlboWFWbyZiVItyBH5BSWZ+XnQEEguSgU6pghkalBqioJHYomCP9DUYJCpCsFAVwHDTcGxtCQjHxhulQoGegZ6hkBjOplkWBgYORjYWJlAwcrAxSkAiwKvaP4/3HqJh3UYyn9lnVnG9Lrnp7Pzhtkh3t2nz54qft6wVS/35TyutokOFgu036qtrUyQvKRfaLlYdMFNtugzR/tEMyMrrdlfWfHc/1wW4dl5o+Nxtvu7s2HnGBpu3XNYk3QvdAcfR0XlBO/M2I9TOt5UrXRRPZAupxh9okt887En0Wp2ycJiQoveM9e47OXZe/iGSxNfmPK0ODn1iTITkupmlhR+fn1rnlF8j96n90umbZNcf3nGfEXbX+JFXPmylcwy97iN67Ifc/PpbpR4p1odce/LmdNmv3hkQ0qKFu9gqDvA2xUtuTaSyZczoWP7Ho1n/pqLTszoF53k8WzXksRAnjKx/+XhD//NWJxxTfkF75lUz/cy+7/byPVc3bC/L2htmMhRkZKI2MsnTD8br2fvZRfgXd7yJYqP+6DRu/dBC5//VJ+YExEwL0x86dlLS3Te8Gyr5My0ag/gDGt/1TZ3Tb/UndD7K/QUf2k+7svh4+gonRb0WqNlF9eR8KjDG9ftN8zqYuR5t7hu3uJ3VZlu93jqhZ1PxfZNF2zVVttSkeeZ3zDpXDGf3oaYvNA5K+ZsUPPOuibNJJcWflvwaqBGotrk3mkdbkd2XLNue1l43jf+c9+9PZEXQuZ9NT05933K3KXsFRtcNp9Zd2qSoeOnbRvOFK89t3vFhIXmXP8WOAWcftbrbxK1zMfv5nHmy/8ufFlaum1W3cXad7wA
-  sha256-0065822bf39b11e3a3113eb2dee4bddf0a07fe0967892498771bd9728e145ad0-3: owGbwMvMwMEoOU9/4l9n2UDGtYwpSWLxRQW5xZnpukWphbqlzpYW5aV6SZl56QetJlQrJRdllmQmJ+YoWSlUK2XmJqanglkp+cnZqUW6uYl5mWmpxSW6KZnpQAoopVSckWhkamZlYGBmamFklJRmbJlkaJhqnGhsaGicmmSUkppqkpSSkmaQaGCelmpgaWZuYWlkYmlhbm6YlGJpbmSRamhimphioFSro6BUUlkAsk4psSQ/NzNZITk/ryQxMy+1SAHo2rzEktKiVCWgqsyU1LySzJJKZIcVpaalFqXmJYO1F5YmVupl5uvnF6TmFWdkppUApXNSE4tTdVNSy/TzkwtgfCsTPUMzPWNz3QoLs3gzE6VakCPyC0oy8/OgIZBclAp0TBHI1KDUFAWPxBIFf6CpwSBTFYKBrgKGm4JjaUlGPjDcKhUM9Az0DIHGdDLJsDAwcjCwsTKBgpWBi1MAFgXxrfz/XYp28Ir8m1rXVfkqeOnyTJGNAo0Nl1cu5tPZo/WC78uV2bGC6l4lOtunKE57od5uKlijqt1Xqb/CRTun7dTW7peyXz/vbahy/blu8ufOFC+hCv2WjvULOHt2zNjN8J8nY9+OXwoM60xl58WW7Klctra53c312n2BRvtIx5W1ghzfVv1yva66S4lHXyd13eWIM6s9+z/ZTk47l/5qp33uqrRfsyZkCF2QUmg5psXzJ1rGUfen/9/V+ecf8uq7/b38MOZA7KG3J/vsdWP23j7VsLdqqe60Fyky8dOr7/btiY1pnTDx9IrXdrKCk3oKVB9uvK8Vwv+SWc1h1u+z08W+2T/b+8r0Ufz11JetlyZ8TWFbNXeHmUHZ0n0qFxTTnYJvplYHa2+54r73yRSFx29Ftsw7m7lmbkDZVg7hX8bKT6sMY+9oZqhKKRlqKc/1arq8lEOf2dFPaMnS8gM7Hj/uXcsrV+qSP0n7y6u0mqRL9apNVX+eeJTc+Kj7+XfYu/Lzp7IO+p2yEdhwOtLOdnf5esZzcvrTn8rF5H2IzzJc1LPPqvrP90oR5Tdy5cV9AqzfZCTbV0o5JqyOPvBNp375jgcz9k5wEmipepsakWbXzZ77a/flY8IbxXaeqxD0uWg2lXWfd3e5wI2emuvKMcqH+/9621zplrvL+Hib2Gx3aQ62u9VyARor9v07oGr3q0HdPesl25st95k17lwBAA==
-  sha256-ea0429e14dc9ff007f56d5db2b75209c2510d81e6869194e33a53352d2b6a4fa-1: owGbwMvMwMEoOU9/4l9n2UDGtYwpSWLxRQW5xZnpukWphbrZVZEm6VF6SZl56dtdc6qVkosySzKTE3OUrBSqlTJzE9NTwayU/OTs1CLd3MS8zLTU4hLdlMx0IAWUUirOSDQyNbNKTTQwMbJMNTRJSbZMSzMwME8zNUsxTUkySjI3NTKwTDYyNTRIsTBMNbMwszS0NEk1Nk40NTY2NUoxSjJLNElLVKrVUVAqqSwAWaeUWJKfm5mskJyfV5KYmZdapAB0bV5iSWlRqhJQVWZKal5JZkklssOKUtNSi1LzksHaC0sTK/Uy8/XzC1LzijMy00qA0jmpicWpuimpZfr5yQUwvpWJnqGpnomZboWFWbyZiVItyBH5BSWZ+XnQEEguSgU6pghkalBqioJHYomCP9DUYJCpCsFAVwHDTcGxtCQjHxhulQoGegZ6hkBjOplkWBgYORjYWJlAwcrAxSkAi4IVTPz/UxQrL/+qfZmUtf7pTh413udfDDt1nG++PLz67xG+E3lznicKaqza2uN+Jbz+zb0pwRPy91100hM98HnGSWHdk16yv/YzR7FtXlLl4tOkwFMnNYlXu2Kxy/EtGWGea0qvNzOdcuGRvpl/tr247kaAdefU73+eHC0OVd0xR77r8q4fJ/P8ny0/t+JwUtvcDVN5nMJWGlXzJD0/lKbP9EDs10cdr/janQG8YT3C2u8717PcaerMP8XU+8twIyNv/KTNNcpv7J32cThv1jCPfal5L7U/vmF74rKGmkfdfuenttgvjlmbKnRh3svN3PbRU/Y9CU+9dJ6l4+aavNDCxB35k5O9t/R3nPJZ+Mc9KP2khbdhuFaHkpnarjtPHasvPKrRfnjb+sF+jv0n5bX0nqycnRnB5M18+eM9zsvh36+fleHN3RKaFvPlnk5b+tP9WdkPcwNX3jFbebQtV3lesbrUwg1W8mturbDafrZ5LdeuGapyX4r9z4vWxbDHfpyV98UwYNrOqrlTjcR8+i648qafEfh44MfKQ9unz9lx/0jU4sf/Cjmmx7hOuL/youKB5Fc716l27hEWXtZ/x117Rl9w8h2Dg5NkNt6uCDewmC1z5HV5gXdv6so3RTLXOX45zai4Ui/xua/ZW2PtgSu77frPr2m6YedwaLqhwrIl39jfLQkUa1b/pf4gIyxz4e9LL6S6anbXP7x90rD8zH2ZeQA=
-kind: ConfigMap
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
 metadata:
-  labels:
-    release.openshift.io/verification-signatures: ""
-  name: ocpupgrade415416-mirrored-release-signatures
-  namespace: openshift-config-managed
-```
-
-idms-oc-mirror.yaml  
-```
----
-apiVersion: config.openshift.io/v1
-kind: ImageDigestMirrorSet
-metadata:
-  name: ocpupgrade415416-idms-release-0
+  name: cs-tempo-product-operator-index-v4-16
+  namespace: openshift-marketplace
 spec:
-  imageDigestMirrors:
-  - mirrors:
-    - quay.kyndryl.tw/olm2/openshift/release
-    source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
-  - mirrors:
-    - quay.kyndryl.tw/olm2/openshift/release-images
-    source: quay.io/openshift-release-dev/ocp-release
-status: {}
-
-```
-
-itms-oc-mirror.yaml  
-```
----
-apiVersion: config.openshift.io/v1
-kind: ImageTagMirrorSet
-metadata:
-  name: ocpupgrade415416-itms-release-0
-spec:
-  imageTagMirrors:
-  - mirrors:
-    - quay.kyndryl.tw/olm2/openshift/release-images
-    source: quay.io/openshift-release-dev/ocp-release
+  image: quay.resin.lab:8443/olm2/tempo-product/redhat/redhat-operator-index:v4.16
+  sourceType: grpc
 status: {}
 ```
+
+cs-redhat-operator-index-v4-16.yaml  
+下面是修改過版本  
+
+### Debug   
+
+可以通過指令檢查是否有成功下載operator  
+
+```
+oc get pod -n openshift-marketplace
+```
+
+觀察到其中的容器正在建立
+```
+cs-opentelemetry-product-operator-index-xdpc7   1/1     Running             0          66m
+cs-quay-operator-index-v4-16-ckpzq              1/1     Running             0          66m
+cs-servicemesh-operator-index-dg5pr             1/1     Running             0          66m
+cs-tempo-product-operator-index-v4-16-rclrt     0/1     ContainerCreating   0          63s
+marketplace-operator-c5d475c88-rc7fn            1/1     Running             0          63m
+```
+
+確定建立完畢之後  
+及代表operatorhub有多出東西  
+可以從UI方面查詢是否有成功指向想要的operator  
+
+### TIPS    
+
+務必要確認oc-mirror指令中，repo對應的路徑，要每一筆都不相同，不然會蓋掉  
+oc-mirror會產生檔案，檔案預設的名稱也會相同，所以也要記得修改掉  
+
+
