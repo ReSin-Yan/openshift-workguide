@@ -90,15 +90,57 @@ Examples:
 
 第一種方式  
 從外部下載之後，將檔案上傳到離線環境(通常是具備oc-mirro以及可以連線到quay之環境)  
-mirror to disk
+mirror to disk  
+需要更換的是config、file的路徑  
+config對應yaml檔案的位置  
+會把檔案下載到file的路徑當中  
+
 ```
-oc-mirror --v2 --config=/root/WS_Resin/ocpupgrade/isc.yaml file:///s3/mirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s
+oc-mirror --v2 --config=/root/resin_workspace/pullimages/operator/ImageSetConfiguration2.yaml  file:///root/resin_workspace/pullimages/operator/copymirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s
 ```
 
+過程如下  
+```
+2025/05/01 10:53:54  [INFO]   : 👋 Hello, welcome to oc-mirror
+2025/05/01 10:53:54  [INFO]   : ⚙️  setting up the environment for you...
+2025/05/01 10:53:54  [INFO]   : 🔀 workflow mode: mirrorToDisk
+2025/05/01 10:53:54  [INFO]   : 🕵  going to discover the necessary images...
+2025/05/01 10:53:54  [INFO]   : 🔍 collecting release images...
+2025/05/01 10:53:54  [INFO]   : 🔍 collecting operator images...
+ ✓   (1m51s) Collecting catalog registry.redhat.io/redhat/redhat-operator-index:v4.16
+2025/05/01 10:55:46  [INFO]   : 🔍 collecting additional images...
+2025/05/01 10:55:46  [INFO]   : 🔍 collecting helm images...
+2025/05/01 10:55:46  [INFO]   : 🔂 rebuilding catalogs
+ ✓   () Rebuilding catalog docker://registry.redhat.io/redhat/redhat-operator-index:v4.16
+2025/05/01 10:55:46  [INFO]   : 🚀 Start copying the images...
+2025/05/01 10:55:46  [INFO]   : 📌 images to copy 12
+ ✓   (22s) ose-kube-rbac-proxy@sha256:7efeeb8b29872a6f0271f651d7ae02c91daea16d853c50e374c310f044d8c76c ➡️  cache
+ ✓   (31s) jaeger-es-index-cleaner-rhel8@sha256:d0ad37a50a8b5f2e816e03f9894ad96d9914aa31fb24d684f98bd557cc406718 ➡️  cache
+ ✓   (31s) jaeger-es-rollover-rhel8@sha256:236798724a8bbf974bd24cc698af982ad96ef43e92e9c7751727ee3ae4d68823 ➡️  cache
+ ✓   (5s) jaeger-operator-bundle@sha256:f8ed2eb7191cb6199fbe36a02727865b1c418aa0d90ce01d6b76e3b9c7768f33 ➡️  cache
+ ✓   (38s) jaeger-agent-rhel8@sha256:11012d44dfefd66f82b551e06757464898c9d16e7a85c34fd0e0ffca00ac5421 ➡️  cache
+ ✓   (43s) jaeger-all-in-one-rhel8@sha256:2beb3661869af4971f8e789464ebf06372dc1cc8aef42eff6574d0602bbf0ad5 ➡️  cache
+ ✓   (10s) redhat-operator-index:v4.16 ➡️  cache
+ ✓   (48s) jaeger-ingester-rhel8@sha256:7a4b5d397712fd050eba79abcb1cce0a90231e3f09014b425362d524b89b1dc1 ➡️  cache
+ ✓   (48s) ose-oauth-proxy@sha256:234af927030921ab8f7333f61f967b4b4dee37a1b3cf85689e9e63240dd62800 ➡️  cache
+ ✓   (57s) jaeger-collector-rhel8@sha256:79948c384908d72f87a9bd018f3a230a2bc38ff32cac1c17ce9bf2e62f7a92dc ➡️  cache
+ ✓   (51s) jaeger-query-rhel8@sha256:f6e489b27ffc438645c3c8e203f3c98733dfed0ccacbd9e9b69079f0b5b8b693 ➡️  cache
+12 / 12 (1m27s) [=====================================================================================================================================================================================================================] 100 %
+ ✓   (56s) jaeger-rhel8-operator@sha256:259f3fcb7c05183f4879a512f502c0346a0401aee5775ac9de6f424729fd6e83 ➡️  cache
+2025/05/01 10:57:14  [INFO]   : === Results ===
+2025/05/01 10:57:14  [INFO]   :  ✓  12 / 12 operator images mirrored successfully
+2025/05/01 10:57:14  [INFO]   : 📦 Preparing the tarball archive...
+2025/05/01 10:59:17  [INFO]   : mirror time     : 5m22.906209797s
+2025/05/01 10:59:17  [INFO]   : 👋 Goodbye, thank you for using oc-mirror
+```
+
+之後在資料夾內可以找到檔案mirror_000001.tar  
+將這個檔案放到離線環境中  
 disk to mirro  
 ```
-oc-mirror --v2 --config=/root/WS_Resin/ocpupgrade/isc.yaml --from file:///s3/mirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s docker://quay.kyndryl.tw/olm2
+oc-mirror --v2 --config=/root/resin_workspace/pullimages/operator/ImageSetConfiguration2.yaml --from file:///root/resin_workspace/pullimages/operator/copymirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s docker://quay.resin.lab:8443/olm2/jaeger-product
 ```
+
 
 儲存目錄，由於此種方式會壓縮一個tar檔案，通常不會太小  
 所以另外指定一個具備足夠儲存空間的路徑  
