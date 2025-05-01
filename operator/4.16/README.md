@@ -41,9 +41,7 @@ podman login local.quay
 ### oc-mirror v2    
 
 建立以下yaml  
-其中的版本是升級的版本  
-代表意思是  
-我去抓ocp4.16的operator(redhat-operator-index)  
+去找ocp4.16的operator(redhat-operator-index)  
 packages名稱是tempo-product  
 安裝的版本是0.14.1-1跟0.14.1-2
 版本建議一個版本就好(但是遇過一個版本無法下載的問題，所以可以多試幾次)  
