@@ -99,6 +99,17 @@ config對應yaml檔案的位置
 oc-mirror --v2 --config=/root/resin_workspace/pullimages/operator/ImageSetConfiguration2.yaml  file:///root/resin_workspace/pullimages/operator/copymirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s
 ```
 
+儲存目錄，由於此種方式會壓縮一個tar檔案，通常不會太小  
+所以另外指定一個具備足夠儲存空間的路徑  
+```
+前面必須寫這樣
+file://  
+
+正確寫法如下
+file:///root/storage/  
+```
+其餘路徑檔案也需要確認好範圍  
+
 過程如下  
 ```
 2025/05/01 10:53:54  [INFO]   : 👋 Hello, welcome to oc-mirror
@@ -141,17 +152,89 @@ disk to mirro
 oc-mirror --v2 --config=/root/resin_workspace/pullimages/operator/ImageSetConfiguration2.yaml --from file:///root/resin_workspace/pullimages/operator/copymirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s docker://quay.resin.lab:8443/olm2/jaeger-product
 ```
 
-
-儲存目錄，由於此種方式會壓縮一個tar檔案，通常不會太小  
-所以另外指定一個具備足夠儲存空間的路徑  
 ```
-前面必須寫這樣
-file://  
-
-正確寫法如下
-file:///root/storage/  
+2025/05/01 11:03:13  [INFO]   : 👋 Hello, welcome to oc-mirror
+2025/05/01 11:03:13  [INFO]   : ⚙️  setting up the environment for you...
+2025/05/01 11:03:13  [INFO]   : 🔀 workflow mode: diskToMirror
+2025/05/01 11:05:32  [INFO]   : 🕵  going to discover the necessary images...
+2025/05/01 11:05:32  [INFO]   : 🔍 collecting release images...
+2025/05/01 11:05:32  [INFO]   : 🔍 collecting operator images...
+ ✓   (0s) Collecting catalog registry.redhat.io/redhat/redhat-operator-index:v4.16
+2025/05/01 11:05:33  [INFO]   : 🔍 collecting additional images...
+2025/05/01 11:05:33  [INFO]   : 🔍 collecting helm images...
+2025/05/01 11:05:33  [INFO]   : 🚀 Start copying the images...
+2025/05/01 11:05:33  [INFO]   : 📌 images to copy 12
+ ✓   (37s) ose-oauth-proxy@sha256:234af927030921ab8f7333f61f967b4b4dee37a1b3cf85689e9e63240dd62800 ➡️  quay.resin.lab:8443/olm2/jaeger-product/openshift4/
+ ✓   (37s) ose-kube-rbac-proxy@sha256:7efeeb8b29872a6f0271f651d7ae02c91daea16d853c50e374c310f044d8c76c ➡️  quay.resin.lab:8443/olm2/jaeger-product/openshift4/
+ ✓   (1m16s) jaeger-ingester-rhel8@sha256:7a4b5d397712fd050eba79abcb1cce0a90231e3f09014b425362d524b89b1dc1 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (1m20s) jaeger-es-rollover-rhel8@sha256:236798724a8bbf974bd24cc698af982ad96ef43e92e9c7751727ee3ae4d68823 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (1m26s) jaeger-es-index-cleaner-rhel8@sha256:d0ad37a50a8b5f2e816e03f9894ad96d9914aa31fb24d684f98bd557cc406718 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (1m27s) jaeger-all-in-one-rhel8@sha256:2beb3661869af4971f8e789464ebf06372dc1cc8aef42eff6574d0602bbf0ad5 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (1m27s) jaeger-agent-rhel8@sha256:11012d44dfefd66f82b551e06757464898c9d16e7a85c34fd0e0ffca00ac5421 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (11s) jaeger-operator-bundle@sha256:f8ed2eb7191cb6199fbe36a02727865b1c418aa0d90ce01d6b76e3b9c7768f33 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (51s) jaeger-rhel8-operator@sha256:259f3fcb7c05183f4879a512f502c0346a0401aee5775ac9de6f424729fd6e83 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (1m29s) jaeger-collector-rhel8@sha256:79948c384908d72f87a9bd018f3a230a2bc38ff32cac1c17ce9bf2e62f7a92dc ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+ ✓   (52s) jaeger-query-rhel8@sha256:f6e489b27ffc438645c3c8e203f3c98733dfed0ccacbd9e9b69079f0b5b8b693 ➡️  quay.resin.lab:8443/olm2/jaeger-product/rhosdt/
+12 / 12 (1m31s) [=====================================================================================================================================================================================================================] 100 %
+ ✓   (11s) redhat-operator-index:v4.16 ➡️  quay.resin.lab:8443/olm2/jaeger-product/redhat/
+2025/05/01 11:07:04  [INFO]   : === Results ===
+2025/05/01 11:07:04  [INFO]   :  ✓  12 / 12 operator images mirrored successfully
+2025/05/01 11:07:04  [INFO]   : 📄 Generating IDMS file...
+2025/05/01 11:07:04  [INFO]   : /root/resin_workspace/pullimages/operator/copymirror/working-dir/cluster-resources/idms-oc-mirror.yaml file created
+2025/05/01 11:07:04  [INFO]   : 📄 No images by tag were mirrored. Skipping ITMS generation.
+2025/05/01 11:07:04  [INFO]   : 📄 Generating CatalogSource file...
+2025/05/01 11:07:04  [INFO]   : /root/resin_workspace/pullimages/operator/copymirror/working-dir/cluster-resources/cs-redhat-operator-index-v4-16.yaml file created
+2025/05/01 11:07:04  [INFO]   : 📄 Generating ClusterCatalog file...
+2025/05/01 11:07:04  [INFO]   : /root/resin_workspace/pullimages/operator/copymirror/working-dir/cluster-resources/cc-redhat-operator-index-v4-16.yaml file created
+2025/05/01 11:07:04  [INFO]   : mirror time     : 3m51.746827976s
+2025/05/01 11:07:04  [INFO]   : 👋 Goodbye, thank you for using oc-mirror
 ```
-其餘路徑檔案也需要確認好範圍  
+
+working-dir/cluster-resources檔案  
+```
+cc-redhat-operator-index-v4-16.yaml  cs-redhat-operator-index-v4-16.yaml  idms-oc-mirror.yaml
+```
+
+在可以連線到OCP的環境中  
+分別apply cs-redhat-operator-index-v4-16.yaml以及idms-oc-mirror.yaml  
+務必要更改裡面的name(建立出來的name名稱都會一樣)
+```
+cc-redhat-operator-index-v4-16.yaml  cs-redhat-operator-index-v4-16.yaml  idms-oc-mirror.yaml
+```
+
+cs-redhat-operator-index-v4-16.yaml  
+下面是修改過版本  
+```
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: cs-jaeger-product-operator-index
+  namespace: openshift-marketplace
+spec:
+  image: quay.resin.lab:8443/olm2/jaeger-product/redhat/redhat-operator-index:v4.16
+  sourceType: grpc
+status: {}
+```
+
+idms-oc-mirror.yaml  
+下面是修改過版本  
+```
+---
+apiVersion: config.openshift.io/v1
+kind: ImageDigestMirrorSet
+metadata:
+  name: jaeger-product-operator-0
+spec:
+  imageDigestMirrors:
+  - mirrors:
+    - quay.resin.lab:8443/olm2/jaeger-product/rhosdt
+    source: registry.redhat.io/rhosdt
+  - mirrors:
+    - quay.resin.lab:8443/olm2/jaeger-product/openshift4
+    source: registry.redhat.io/openshift4
+status: {}
+```
+
 
 ### oc-mirror mirror to mirro    
 
@@ -233,7 +316,7 @@ cs-redhat-operator-index-v4-16.yaml
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  name: cs-tempo-product-operator-index-v4-16
+  name: cs-tempo-product-operator-index
   namespace: openshift-marketplace
 spec:
   image: quay.resin.lab:8443/olm2/tempo-product/redhat/redhat-operator-index:v4.16
@@ -243,6 +326,22 @@ status: {}
 
 cs-redhat-operator-index-v4-16.yaml  
 下面是修改過版本  
+```
+---
+apiVersion: config.openshift.io/v1
+kind: ImageDigestMirrorSet
+metadata:
+  name: idms-operator-0
+spec:
+  imageDigestMirrors:
+  - mirrors:
+    - quay.resin.lab:8443/olm2/jaeger-product/rhosdt
+    source: registry.redhat.io/rhosdt
+  - mirrors:
+    - quay.resin.lab:8443/olm2/jaeger-product/openshift4
+    source: registry.redhat.io/openshift4
+status: {}
+```
 
 ### Debug   
 
