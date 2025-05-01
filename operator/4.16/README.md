@@ -3,6 +3,7 @@
 ### 前置準備  
 
 使用Red Hat OpenShift Container Platform Operator Update Information Checker來查詢operator當前支援的版本(可以從當前OCP版本對應的operator)  
+用這種方式可以跳過去查詢的時間  
 [查詢版本支援](https://access.redhat.com/labs/ocpouic/   "link")  
 
 ### 安裝oc-mirror插件  
@@ -115,41 +116,73 @@ file:///root/storage/
 ### oc-mirror mirror to mirro    
 
 如果當前環境是可以直些連線到外部網站下載  
-並且可以直接輸入以下內容  
+參考以下指令  
+需要更換的是workspace的路徑以及repo的路徑  
+workspace會存放working-dir/cluster-resources這一個檔案路徑，裡面放著三個檔案   
+repo路徑後面需要進行更換，不能相同，會蓋過前一個步驟的  
 
 ```
-oc-mirror --v2 --config=/root/WS_Resin/ocpupgrade/isc.yaml --workspace file:///s3/mirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s docker://quay.kyndryl.tw/olm2
+oc-mirror --v2 --config=/root/resin_workspace/pullimages/operator/ImageSetConfiguration2.yaml --workspace file:///root/resin_workspace/pullimages/operator/mirror --retry-times=10 --image-timeout=120m0s --retry-delay=10s docker://quay.resin.lab:8443/olm2/tempo-product  
 ```
 
-### oc-mirror mirror to mirro    
-
+working-dir/cluster-resources檔案  
 ```
-2025/04/27 23:01:34  [INFO]   : === Results ===
-2025/04/27 23:01:34  [INFO]   :  ✓  575 / 575 release images mirrored successfully
-2025/04/27 23:01:34  [INFO]   : 📄 Generating IDMS file...
-2025/04/27 23:01:34  [INFO]   : /s3/mirror/working-dir/cluster-resources/idms-oc-mirror.yaml file created
-2025/04/27 23:01:34  [INFO]   : 📄 Generating ITMS file...
-2025/04/27 23:01:34  [INFO]   : /s3/mirror/working-dir/cluster-resources/itms-oc-mirror.yaml file created
-2025/04/27 23:01:34  [INFO]   : 📄 No catalogs mirrored. Skipping CatalogSource file generation.
-2025/04/27 23:01:34  [INFO]   : 📄 No catalogs mirrored. Skipping ClusterCatalog file generation.
-2025/04/27 23:01:34  [INFO]   : 📄 Generating Signature Configmap...
-2025/04/27 23:01:34  [INFO]   : /s3/mirror/working-dir/cluster-resources/signature-configmap.json file created
-2025/04/27 23:01:34  [INFO]   : /s3/mirror/working-dir/cluster-resources/signature-configmap.yaml file created
-2025/04/27 23:01:34  [INFO]   : mirror time     : 29m26.448950564s
-2025/04/27 23:01:34  [INFO]   : 👋 Goodbye, thank you for using oc-mirror
+cc-redhat-operator-index-v4-16.yaml  cs-redhat-operator-index-v4-16.yaml  idms-oc-mirror.yaml
 ```
 
-正常PUSH完成之後會產生如下的檔案  
-總共產生以下檔案  
+輸入指令之後如下  
 ```
-idms-oc-mirror.yaml  itms-oc-mirror.yaml  signature-configmap.yaml signature-configmap.json  
+2025/05/01 09:35:44  [INFO]   : 👋 Hello, welcome to oc-mirror
+2025/05/01 09:35:44  [INFO]   : ⚙️  setting up the environment for you...
+2025/05/01 09:35:44  [INFO]   : 🔀 workflow mode: mirrorToMirror
+2025/05/01 09:35:44  [INFO]   : 🕵  going to discover the necessary images...
+2025/05/01 09:35:44  [INFO]   : 🔍 collecting release images...
+2025/05/01 09:35:44  [INFO]   : 🔍 collecting operator images...
+ ✓   (1m21s) Collecting catalog registry.redhat.io/redhat/redhat-operator-index:v4.16
+2025/05/01 09:37:06  [INFO]   : 🔍 collecting additional images...
+2025/05/01 09:37:06  [INFO]   : 🔍 collecting helm images...
+2025/05/01 09:37:06  [INFO]   : 🔂 rebuilding catalogs
+ ✓   (0s) Rebuilding catalog docker://registry.redhat.io/redhat/redhat-operator-index:v4.16
+2025/05/01 09:37:06  [INFO]   : 🚀 Start copying the images...
+2025/05/01 09:37:06  [INFO]   : 📌 images to copy 18
+ ✓   (1m31s) ose-kube-rbac-proxy@sha256:7efeeb8b29872a6f0271f651d7ae02c91daea16d853c50e374c310f044d8c76c ➡️  quay.resin.lab:8443/olm2/tempo-product/openshift4/
+ ✓   (1m48s) tempo-query-rhel8@sha256:b43c3af00d557a549a1ab7737583e80c16896dcec1d379087f517ee080ecde74 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (2m16s) tempo-gateway-opa-rhel8@sha256:6f91ab07ee9b0361fd4f26d0d380c09a43a1839099a97103e6c130b6cf926be8 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (2m24s) tempo-rhel8-operator@sha256:81bf303fe624a69857e4b4a0e3e14494b818824f04d2c4ccdfdc0a02743ebaf2 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (2m26s) tempo-gateway-rhel8@sha256:d129101bf8563715cf8f2776a8359316d8dde35899af7f736fe9cbb380f4530c ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (2m32s) tempo-jaeger-query-rhel8@sha256:ebef9709e328cf9918ff99ed3dcac6abb1a38c2cd3b46af4fd61cc0b87c0e165 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (50s) tempo-query-rhel8@sha256:9c910e8ba1433e6bffb74f0211dd81f8647184351621ea7ba001382c6ea3e08f ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (1m17s) tempo-rhel8@sha256:f7a68277533ff937ca012b6114443416cd11b853783795116e40cedec21fd8e4 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (2m49s) tempo-rhel8-operator@sha256:89110559c33c815b59aa914b5dbb170242dbbdbf9cf1e9f75f63875fb6d9e895 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (17s) tempo-operator-bundle@sha256:fd49fd51bd9c033317ca2ea172e6a21c84ccc17b609f9e5543ece39dd5ec8808 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (2m57s) tempo-rhel8@sha256:7ad3f3e5f32457a2f2bf79e0ceffb9f988183a8fb4654d39f5d6496ca0ae9b70 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (10s) tempo-operator-bundle@sha256:a980e21c5cf96387bee07f2f271e73060bb5032ac969d678dc1f718841531ecb ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (4s) redhat-operator-index:v4.16 ➡️  cache
+ ✓   (11s) redhat-operator-index:v4.16 ➡️  quay.resin.lab:8443/olm2/tempo-product/redhat/
+ ✓   (57s) tempo-gateway-opa-rhel8@sha256:747128f0fa372e44872674b5bd54f3479e8bedc839c0914fe1a038c36a8ecdd7 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (55s) tempo-jaeger-query-rhel8@sha256:ee550055792ded0c3d2783664166351120db35ba754b0ecb58a158d82ab5bb80 ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+ ✓   (1m6s) tempo-gateway-rhel8@sha256:39189db648e2ac617b94424a6b4f556f645ce26c7f235c36bcf2df74e226e72b ➡️  quay.resin.lab:8443/olm2/tempo-product/rhosdt/
+18 / 18 (4m18s) [=====================================================================================================================================================================================================================] 100 %
+ ✓   (2m0s) ose-oauth-proxy@sha256:234af927030921ab8f7333f61f967b4b4dee37a1b3cf85689e9e63240dd62800 ➡️  quay.resin.lab:8443/olm2/tempo-product/openshift4/
+2025/05/01 09:41:24  [INFO]   : === Results ===
+2025/05/01 09:41:24  [INFO]   :  ✓  18 / 18 operator images mirrored successfully
+2025/05/01 09:41:24  [INFO]   : 📄 Generating IDMS file...
+2025/05/01 09:41:24  [INFO]   : /root/resin_workspace/pullimages/operator/mirror/working-dir/cluster-resources/idms-oc-mirror.yaml file created
+2025/05/01 09:41:24  [INFO]   : 📄 No images by tag were mirrored. Skipping ITMS generation.
+2025/05/01 09:41:24  [INFO]   : 📄 Generating CatalogSource file...
+2025/05/01 09:41:24  [INFO]   : /root/resin_workspace/pullimages/operator/mirror/working-dir/cluster-resources/cs-redhat-operator-index-v4-16.yaml file created
+2025/05/01 09:41:24  [INFO]   : 📄 Generating ClusterCatalog file...
+2025/05/01 09:41:24  [INFO]   : /root/resin_workspace/pullimages/operator/mirror/working-dir/cluster-resources/cc-redhat-operator-index-v4-16.yaml file created
+2025/05/01 09:41:24  [INFO]   : mirror time     : 5m39.746468817s
+2025/05/01 09:41:24  [INFO]   : 👋 Goodbye, thank you for using oc-mirror
 ```
 
-把idms, itms, signature-configmap三個yaml複製出來並更改檔名和裡面的name   
+
+ 
 在可以連線到OCP的環境中  
-分別apply其中前三份檔案  
+分別apply cs-redhat-operator-index-v4-16.yaml以及idms-oc-mirror.yaml其中檔案  
 ```
-idms-oc-mirror.yaml  itms-oc-mirror.yaml  signature-configmap.yaml signature-configmap.json  
+cc-redhat-operator-index-v4-16.yaml  cs-redhat-operator-index-v4-16.yaml  idms-oc-mirror.yaml
 ```
 
 signature-configmap.yaml  
